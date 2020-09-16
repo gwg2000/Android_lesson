@@ -2,11 +2,14 @@ package com.example.calculate;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.Map;
 import java.util.Stack;
 
 import static java.lang.Math.*;
@@ -15,7 +18,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     Stack<Double> stack_num=new Stack();
     Stack<Character>stack_op=new Stack();
-
     String num="";
 
     Button button_zero;
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button button_delete;
     Button button_right_bracket;
     Button button_left_bracket;
+    Button button_change;
     TextView terminal;//显示屏
 
     Boolean pointLock1=false;//防止出现两个连续的小数点
@@ -72,6 +75,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         button_return_zero=findViewById(R.id.return_zero);
         button_equal=findViewById(R.id.equal);
         button_point=findViewById(R.id.point);
+        button_change=findViewById(R.id.change);
+        terminal=findViewById(R.id.terminal);
+
+        int orientation = getResources().getConfiguration().orientation;
+        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
         button_sin=findViewById(R.id.sin);
         button_cos=findViewById(R.id.cos);
         button_tan=findViewById(R.id.tan);
@@ -79,7 +87,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         button_sql=findViewById(R.id.sql);
         button_right_bracket=findViewById(R.id.right_bracket);
         button_left_bracket=findViewById(R.id.left_bracket);
-        terminal=findViewById(R.id.terminal);
+        button_sin.setOnClickListener(this);
+        button_cos.setOnClickListener(this);
+        button_tan.setOnClickListener(this);
+        button_sql.setOnClickListener( this);
+        button_delete.setOnClickListener( this);
+        button_left_bracket.setOnClickListener( this);
+        button_right_bracket.setOnClickListener( this);
+        }
 
         button_zero.setOnClickListener(this);
         button_one.setOnClickListener(this);
@@ -97,14 +112,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         button_divide.setOnClickListener( this);
         button_point.setOnClickListener(this);
         button_equal.setOnClickListener(this);
-        button_sin.setOnClickListener(this);
-        button_cos.setOnClickListener(this);
-        button_tan.setOnClickListener(this);
-        button_sql.setOnClickListener( this);
-        button_delete.setOnClickListener( this);
-        button_left_bracket.setOnClickListener( this);
-        button_right_bracket.setOnClickListener( this);
+//        button_sin.setOnClickListener(this);
+//        button_cos.setOnClickListener(this);
+//        button_tan.setOnClickListener(this);
+//        button_sql.setOnClickListener( this);
+//        button_delete.setOnClickListener( this);
+//        button_left_bracket.setOnClickListener( this);
+//        button_right_bracket.setOnClickListener( this);
         button_return_zero.setOnClickListener(this);
+        button_change.setOnClickListener(this);
+
     }
 
     public void onClick(View v) {
@@ -184,6 +201,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.right_bracket:
                 terminal.setText(str+((Button)v).getText());
                 pointLock2=true;
+                break;
+            case R.id.change:
+                Intent intent=new Intent (MainActivity.this,Transiton.class);
+                startActivity(intent);
                 break;
             case R.id.equal:
                 stack_op.push('#');

@@ -35,7 +35,6 @@
 
     <Button
         android:id="@+id/add"
-
         android:text="+" />
 
     <Button
@@ -95,9 +94,8 @@
         />
     <Button
         android:id="@+id/equal"
-        android:layout_rowSpan="2"
         android:text="="
-        android:layout_gravity="fill" />
+         />
 
     <Button
         android:id="@+id/point"
@@ -113,6 +111,10 @@
     <Button
         android:id="@+id/delete"
         android:text="←"
+        />
+    <Button
+        android:id="@+id/change"
+        android:text="进制转换"
         />
 
 
