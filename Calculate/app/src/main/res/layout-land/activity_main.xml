@@ -16,7 +16,6 @@
         android:textSize="50dp"
         android:maxLines="2"
         android:background="#99FF99" />
-
     <Button
         android:id="@+id/return_zero"
         android:text="c" />
