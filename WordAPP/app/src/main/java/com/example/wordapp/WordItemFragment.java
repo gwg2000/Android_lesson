@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.ListFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +18,7 @@ import com.example.wordapp.dummy.WordContent;
 /**
  * A fragment representing a list of Items.
  */
-public class WordItemFragment extends Fragment {
+public class WordItemFragment extends ListFragment {
     OnItemClickListener mOnItemClickListener;
     MyItemRecyclerViewAdapter mMyItemRecyclerViewAdapter;
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -40,7 +41,7 @@ public class WordItemFragment extends Fragment {
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        mOnItemClickListener=(OnItemClickListener) context;
+        mOnItemClickListener=(OnItemClickListener)getActivity();
     }
 
     public void onCreate(Bundle savedInstanceState) {
