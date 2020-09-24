@@ -10,7 +10,7 @@ public class WordsDBHelper extends SQLiteOpenHelper {
     private final static String DATABASE_NAME = "wordsdb";//数据库名字
     private final static int DATABASE_VERSION = 1;//数据库版本
 
-    private final static String SQL_CREATE_DATABASE = "CREATE TABLE " + Words.Word.TABLE_NAME + "("+Words.Word._ID + "" +
+    private final static String SQL_CREATE_DATABASE = "CREATE TABLE " + Words.Word.TABLE_NAME + "("+Words.Word._ID + " " +
             "VARCHAR(32) PRIMARY KEY NOT NULL," + Words.Word.COLUMN_NAME_WORD + " TEXT UNIQUE NOT NULL,"+
             Words.Word.COLUMN_NAME_MEANING + " TEXT," + Words.Word.COLUMN_NAME_SAMPLE + " TEXT)";
     private final static String SQL_DELETE_DATABASE = "DROP TABLE IF EXISTS " + Words.Word.TABLE_NAME;
