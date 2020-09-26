@@ -17,13 +17,14 @@ import android.widget.Toast;
 import com.example.myword.dummy.Words;
 
 public class MainActivity extends AppCompatActivity implements
-        WordItemFragment.OnFragmentInteractionListener,
-        WordDetailFragment.OnFragmentInteractionListener{
+        WordItemFragment.OnFragmentInteractionListener,WordDetailFragment.OnFragmentInteractionListener
+        {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -40,6 +41,10 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.search:
                 SearchDialog();
                 break;
+            case R.id.all:
+                RefreshWordItemFragment();
+                break;
+
 
         }
         return super.onOptionsItemSelected(item);
@@ -84,11 +89,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void ChangeWordDetailFragment(String id){
-        Bundle arguments = new Bundle();
-        arguments.putString(WordDetailFragment.ARG_ID, id);
-        WordDetailFragment fragment = new WordDetailFragment();
-        fragment.setArguments(arguments);
-        getSupportFragmentManager().beginTransaction().replace(R.id.worddetail, fragment).commit();
+
+            Bundle arguments = new Bundle();
+            arguments.putString(WordDetailFragment.ARG_ID, id);
+            WordDetailFragment fragment = new WordDetailFragment();
+            fragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction().replace(R.id.worddetail, fragment).commit();
+
     }
 
     private void InsertDialog() {

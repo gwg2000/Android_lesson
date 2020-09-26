@@ -1,6 +1,7 @@
 package com.example.myword;
 
 import android.content.Context;
+import android.media.VolumeShaper;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -37,12 +38,14 @@ public class WordDetailFragment extends Fragment {
          super.onCreate(savedInstanceState);
          if (getArguments() != null) {
              mID = getArguments().getString(ARG_ID);
+
          }
      }
 
      public View onCreateView(LayoutInflater inflater, ViewGroup container,
                               Bundle savedInstanceState)
      {
+
          View view= inflater.inflate(R.layout.fragment_word_detail, container, false);
         WordsDB wordsDB=WordsDB.getWordsDB();
         if(wordsDB!=null && mID!=null){
@@ -50,6 +53,7 @@ public class WordDetailFragment extends Fragment {
             TextView textViewWordMeaning=(TextView)view.findViewById(R.id.wordmeaning);
             TextView textViewWordSample=(TextView)view.findViewById(R.id.wordsample);
             Words.WordDescription item=wordsDB.getSingleWord(mID);
+            System.out.println(item);
             if(item!=null){
                 textViewWord.setText(item.word);
                 textViewWordMeaning.setText(item.meaning);
@@ -61,7 +65,8 @@ public class WordDetailFragment extends Fragment {
                 textViewWordSample.setText("");
             }
         }
-        return view;}
+        return view;
+     }
 
 
  }

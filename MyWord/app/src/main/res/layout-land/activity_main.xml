@@ -17,7 +17,8 @@
        app:layout_constraintBottom_toBottomOf="parent"
        app:layout_constraintStart_toStartOf="parent"
        app:layout_constraintEnd_toStartOf="@+id/worddetail"/>
-   <fragment
+   <RelativeLayout
+       android:name="com.example.myword.WordDetailFragment"
        android:id="@+id/worddetail"
        android:layout_width="0dp"
        android:layout_height="match_parent"

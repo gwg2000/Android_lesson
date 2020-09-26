@@ -51,10 +51,12 @@ public class WordItemFragment extends ListFragment {
     public void refreshWordsList() {
         WordsDB wordsDB = WordsDB.getWordsDB();
         if (wordsDB != null) {
+
             ArrayList<Map<String, String>> items = wordsDB.getAllWords();
             SimpleAdapter adapter = new SimpleAdapter(getActivity(), items, R.layout.item,
                     new String[]{Words.Word._ID, Words.Word.COLUMN_NAME_WORD},
                     new int[]{R.id.textId, R.id.textViewWord});
+
             setListAdapter(adapter);
         }
     }
@@ -69,6 +71,7 @@ public class WordItemFragment extends ListFragment {
         WordsDB wordsDB = WordsDB.getWordsDB();
         if (wordsDB != null) {
             ArrayList<Map<String, String>> items = wordsDB.Search(strWord);
+
             if (items.size() > 0) {
                 SimpleAdapter adapter = new SimpleAdapter(getActivity(), items, R.layout.item,
                         new String[]{Words.Word._ID, Words.Word.COLUMN_NAME_WORD},

@@ -15,6 +15,7 @@ public class WordsDBHelper extends SQLiteOpenHelper {
             Words.Word.COLUMN_NAME_MEANING + " TEXT," + Words.Word.COLUMN_NAME_SAMPLE + " TEXT)";
     private final static String SQL_DELETE_DATABASE = "DROP TABLE IF EXISTS " + Words.Word.TABLE_NAME;
 
+    String s= " insert into words set (_id,word,meaning,sample) values (?,?,?,?)";
     public WordsDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -22,6 +23,8 @@ public class WordsDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(SQL_CREATE_DATABASE);
+        //System.out.println("SQL");
+        //sqLiteDatabase.execSQL(s,new String[]{"1","apple","haha","This is a apple"});
     }
 
     @Override
