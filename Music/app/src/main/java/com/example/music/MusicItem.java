@@ -1,6 +1,7 @@
 package com.example.music;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -34,13 +35,14 @@ public class MusicItem extends ListFragment {
         public void onDeleteDialog(String strId);
 
     }
-    String music[]={"南山南","走马","飘向北方"};
+    //String music[]={"南山南","走马","飘向北方"};
     ArrayList<Map<String,String>> list_total,list_xian;
 
     private OnFragmentInteractionListener mListener;
 
     public void onAttach(Context context) {
         super.onAttach(context);
+
         mListener = (OnFragmentInteractionListener) getActivity();
     }
 
@@ -64,14 +66,14 @@ public class MusicItem extends ListFragment {
     public void refreshWordsList() {
 
         list_total=new ArrayList<Map<String,String>>();
-        list_xian=new ArrayList<Map<String,String>>();
-        for(int i=0;i<music.length;i++)
+        //list_xian=new ArrayList<Map<String,String>>();
+        for(int i=0;i<MainActivity.filenames.length;i++)
         {
             Map<String,String> item=new HashMap<String,String>();
-            item.put("Musicname",music[i]);
+            item.put("Musicname",MainActivity.filenames[i]);
             list_total.add(item);
-            list_xian.add(item);
-            MusicService.musicList.add(i,music[i]);
+            //list_xian.add(item);
+            MusicService.musicList.add(i,MainActivity.filenames[i]);
         }
             SimpleAdapter adapter = new SimpleAdapter(getActivity(), list_total, R.layout.item,
                     new String[]{"Musicname"},
@@ -89,6 +91,7 @@ public class MusicItem extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         refreshWordsList();
 
     }

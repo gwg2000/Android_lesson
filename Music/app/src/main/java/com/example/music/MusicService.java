@@ -25,6 +25,7 @@ public class MusicService extends Service {
     public void onCreate() {
         player=new MediaPlayer();
         totalnum=musicList.size();
+        //System.out.println("zongshu"+totalnum);
         super.onCreate();
     }
 

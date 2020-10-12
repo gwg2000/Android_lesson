@@ -3,6 +3,7 @@ package com.example.music;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,47 +11,72 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity implements MusicItem.OnFragmentInteractionListener{
 
-    //Button Pause,Last,Stop,Next;
+    Handler handler;
     SeekBar seekBar;
-    private Handler seekbarhandler;// 处理改变进度条事件
-    //int UPDATE = 0x101;
-    //private boolean autoChange, manulChange;
-    public SeekbarThread seekbarthread=null;
-    public class SeekbarThread extends Thread {
-        private SeekBar seekbar;
-        public void run(){
-            Message message=new Message();
-            message.what=1;
-            seekbarhandler.sendMessage(message);
-        }
-
-    }
-
+    int UPDATE = 0x101;
+    static String filenames[]=null;
+    AssetManager assets = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        try {
+
+              String  filename []= getResources().getAssets().list("");
+
+              int num=filename.length-2;
+              filenames=new String[num];
+               for(int i=2;i<filename.length;i++)
+                 filenames[i-2]=filename[i].substring(0, filename[i].indexOf("."));
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         setContentView(R.layout.activity_main);
-//        Pause=findViewById(R.id.begin);
-//        Last=findViewById(R.id.last);
-//        Stop=findViewById(R.id.stop);
-//        Next=findViewById(R.id.next);
-//        Pause.setOnClickListener(this);
-//        Last.setOnClickListener(this);
-//        Stop.setOnClickListener(this);
-//        Next.setOnClickListener(this);
-//        seekbarthread=new SeekbarThread();
-//        seekBar=findViewById(R.id.music_bar);
-//        seekbarhandler=new Handler(){
-//            public void handleMessage(Message msg){
-//                super.handleMessage(msg);
-//                if(msg.what==1){
-//                    seekBar.setProgress((int)(((double)MusicService.player.getCurrentPosition()/MusicService.player.getDuration())*100));
-//                    seekbarhandler.postDelayed(seekbarthread, 1000);
-//                }
-//            }
-//        };
+        seekBar=findViewById(R.id.music_bar);
+        handler=new Handler(){
+            public void handleMessage(Message msg) {
+                if(msg.what==UPDATE)
+                {
+                    seekBar.setProgress(msg.arg1);
+                }
+            }
+
+        };
+
+        final Runnable myWorker = new Runnable() {
+            int position, mMax, sMax;
+            @Override
+            public void run() {
+                while(true)
+                {
+                    if(MusicService.player!=null&&MusicService.player.isPlaying())
+                    {
+                        position = MusicService.player.getCurrentPosition();
+                        mMax = MusicService.player.getDuration();
+                        sMax = seekBar.getMax();
+                        Message m = handler.obtainMessage();
+                        m.arg1 = position * sMax / mMax;
+                        m.what = UPDATE;
+                        handler.sendMessage(m);
+                        try {
+                            Thread.sleep(1000);// 每间隔1秒发送一次更新消息
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+            }
+        };
+
+        Thread workThread = new Thread(null, myWorker, "WorkThread");
+        workThread.start();
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
@@ -112,31 +138,11 @@ public class MainActivity extends AppCompatActivity implements MusicItem.OnFragm
 
     public void onClick_Stop(View view) {
         MusicService.player.stop();
+
     }
 
 
 
 
-//    public void onClick(View v) {
-//        switch (v.getId()){
-//            case R.id.begin:
-//                if(MusicService.player.isPlaying())
-//                    MusicService.player.pause();
-//                else
-//                    MusicService.player.start();
-//            case R.id.next:
-//                if(MusicService.flag+1!=MusicService.totalnum){
-//                    Intent intent=new Intent(this,MusicService.class);
-//                intent.putExtra("name",MusicService.musicList.get(MusicService.flag+1));
-//                MusicService.flag++;
-//                startService(intent);}
-//            case R.id.last:
-//                if(MusicService.flag-1>=0){
-//                    Intent intent=new Intent(this,MusicService.class);
-//                    intent.putExtra("name",MusicService.musicList.get(MusicService.flag-1));
-//                    MusicService.flag--;
-//                    startService(intent);}
-//
-//        }
-//    }
+
 }
