@@ -2,24 +2,36 @@ package com.example.music;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements MusicItem.OnFragmentInteractionListener{
 
     Handler handler;
     SeekBar seekBar;
+    Button button_order;
     int UPDATE = 0x101;
     static String filenames[]=null;
+    static int order=0;
     AssetManager assets = null;
+    Boolean first=false;
+    static List<String> musicList=new ArrayList<String>();
+    static List<String>musicing_list=new ArrayList<String>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements MusicItem.OnFragm
         }
         setContentView(R.layout.activity_main);
         seekBar=findViewById(R.id.music_bar);
+        button_order=findViewById(R.id.order);
         handler=new Handler(){
             public void handleMessage(Message msg) {
                 if(msg.what==UPDATE)
@@ -46,13 +59,13 @@ public class MainActivity extends AppCompatActivity implements MusicItem.OnFragm
                     seekBar.setProgress(msg.arg1);
                 }
             }
-
         };
 
         final Runnable myWorker = new Runnable() {
             int position, mMax, sMax;
             @Override
             public void run() {
+
                 while(true)
                 {
                     if(MusicService.player!=null&&MusicService.player.isPlaying())
@@ -100,6 +113,23 @@ public class MainActivity extends AppCompatActivity implements MusicItem.OnFragm
 
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_all,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.all:
+                musicing_list.clear();
+                musicing_list.addAll(musicList);
+                MusicService.flag=looking(MusicService.songname);
+                RefreshWordItemFragment();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public void onWordItemClick(String musicname) {
 
@@ -109,40 +139,96 @@ public class MainActivity extends AppCompatActivity implements MusicItem.OnFragm
     }
 
     @Override
-    public void onDeleteDialog(String strId) {
+    public void onDeleteDialog(final String musicname) {
+        new AlertDialog.Builder(this).setTitle("从当前列表删除")
+                .setMessage("确定将该歌曲从当前列表删除吗?")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        musicing_list.remove(looking(musicname));
+                       MusicService.flag=looking(MusicService.songname);//删除歌曲
+                        RefreshWordItemFragment();
+                   }    })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int i) {        }    })
+                .create().show();
 
+    }
+    private void RefreshWordItemFragment() {
+        MusicItem wordItemFragment = (MusicItem) getSupportFragmentManager()
+                .findFragmentById(R.id.musiclist);
+        wordItemFragment.refreshWordsList();
+    }
+
+    int looking(String name){
+        for(int i=0;i<musicing_list.size();i++)
+        {
+            if(name.equals(musicing_list.get(i)))
+                return i;
+        }
+        return 0;
     }
 
     public void onClick_Pause(View view) {
-        if(MusicService.player.isPlaying())
+        if(first==false)
+        {
+            play(musicing_list.get(0));
+            first=true;
+        }
+        else{
+
+        if(MusicService.player.isPlaying()){
             MusicService.player.pause();
+            first=true;}
         else
-            MusicService.player.start();
+            MusicService.player.start();}
     }
 
     public void onClick_Last(View view) {
+        if(order==1)
+        {
+            Random rand = new Random();
+            int randNum = rand.nextInt(MusicService.totalnum);
+            play(musicing_list.get(randNum));
+        }
+        else{
         if(MusicService.flag-1>=0){
-                    Intent intent=new Intent(this,MusicService.class);
-                    intent.putExtra("name",MusicService.musicList.get(MusicService.flag-1));
-                    MusicService.flag--;
-                    startService(intent);}
+                   play(musicing_list.get(MusicService.flag-1));}}
     }
 
     public void onClick_Next(View view) {
+        if(order==1)
+        {
+            Random rand = new Random();
+            int randNum = rand.nextInt(MusicService.totalnum);
+            play(musicing_list.get(randNum));
+        }
+        else{
         if(MusicService.flag+1!=MusicService.totalnum){
-            Intent intent=new Intent(this,MusicService.class);
-            intent.putExtra("name",MusicService.musicList.get(MusicService.flag+1));
-            MusicService.flag++;
-            startService(intent);}
+           play(musicing_list.get(MusicService.flag+1));}}
     }
 
-    public void onClick_Stop(View view) {
-        MusicService.player.stop();
+//    public void onClick_Stop(View view) {
+//        MusicService.player.stop();
+//
+//    }
 
+    public void play(String name)
+    {
+        Intent intent=new Intent(this,MusicService.class);
+        intent.putExtra("name",name);
+        startService(intent);
     }
 
 
-
-
-
+    public void onClick_order(View view) {
+        if(order==0){
+        button_order.setText("随机");
+        order=1;}
+        else
+        {
+            button_order.setText("顺序");
+            order=0;
+        }
+    }
 }

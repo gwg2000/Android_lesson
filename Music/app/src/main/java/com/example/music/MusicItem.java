@@ -10,15 +10,19 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.example.music.dummy.DummyContent;
 
+import java.security.Provider;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +36,7 @@ public class MusicItem extends ListFragment {
     public interface OnFragmentInteractionListener {
         public void onWordItemClick(String musicname);
 
-        public void onDeleteDialog(String strId);
+        public void onDeleteDialog(String musicname);
 
     }
     //String music[]={"南山南","走马","飘向北方"};
@@ -42,7 +46,11 @@ public class MusicItem extends ListFragment {
 
     public void onAttach(Context context) {
         super.onAttach(context);
-
+        for(int i=0;i<MainActivity.filenames.length;i++)
+        {
+            MainActivity.musicList.add(i,MainActivity.filenames[i]);
+            MainActivity.musicing_list.add(i,MainActivity.filenames[i]);
+        }
         mListener = (OnFragmentInteractionListener) getActivity();
     }
 
@@ -67,19 +75,21 @@ public class MusicItem extends ListFragment {
 
         list_total=new ArrayList<Map<String,String>>();
         //list_xian=new ArrayList<Map<String,String>>();
-        for(int i=0;i<MainActivity.filenames.length;i++)
+        for(int i=0;i<MainActivity.musicing_list.size();i++)
         {
             Map<String,String> item=new HashMap<String,String>();
-            item.put("Musicname",MainActivity.filenames[i]);
+            item.put("Musicname",MainActivity.musicing_list.get(i));
             list_total.add(item);
             //list_xian.add(item);
-            MusicService.musicList.add(i,MainActivity.filenames[i]);
+           // MainActivity.musicList.add(i,MainActivity.filenames[i]);
         }
             SimpleAdapter adapter = new SimpleAdapter(getActivity(), list_total, R.layout.item,
                     new String[]{"Musicname"},
                     new int[]{R.id.music_name});
 
             setListAdapter(adapter);
+
+        MusicService.totalnum=MainActivity.musicing_list.size();
         }
 
     public MusicItem() {
@@ -100,6 +110,30 @@ public class MusicItem extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
+        ListView mListView = (ListView) view.findViewById(android.R.id.list);
+        registerForContextMenu(mListView);
         return view;
+    }
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getActivity().getMenuInflater().inflate(R.menu.menu_delete, menu);
+    }
+
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = null;
+        View itemView = null;
+        TextView textView=null;
+        switch (item.getItemId()) {
+            case R.id.delete:
+                info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                itemView = info.targetView;
+                textView = (TextView) itemView.findViewById(R.id.music_name);
+                if (textView != null) {
+                    String str = textView.getText().toString();
+                    mListener.onDeleteDialog(str);
+                }
+                break;
+        }
+        return true;
     }
 }

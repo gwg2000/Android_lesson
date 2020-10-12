@@ -34,6 +34,7 @@
     app:layout_constraintLeft_toLeftOf="parent"
     tools:ignore="MissingConstraints">
     <LinearLayout
+        android:layout_centerHorizontal="true"
         android:id="@+id/lay2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,13 +53,13 @@
             android:layout_height="wrap_content"
             android:text="开始/暂停"
             />
-        <Button
-            android:id="@+id/stop"
-            android:onClick="onClick_Stop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="停止"
-            />
+<!--        <Button-->
+<!--            android:id="@+id/stop"-->
+<!--            android:onClick="onClick_Stop"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="停止"-->
+<!--            />-->
         <Button
             android:onClick="onClick_Next"
             android:id="@+id/next"
@@ -66,6 +67,12 @@
             android:layout_height="wrap_content"
             android:text="下一首"
             />
+        <Button
+            android:id="@+id/order"
+            android:onClick="onClick_order"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="顺序"/>
 
     </LinearLayout>
 
