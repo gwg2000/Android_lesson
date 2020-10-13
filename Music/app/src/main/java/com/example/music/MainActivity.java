@@ -28,30 +28,32 @@ public class MainActivity extends AppCompatActivity implements MusicItem.OnFragm
     int UPDATE = 0x101;
     static String filenames[]=null;
     static int order=0;
-    AssetManager assets = null;
-    Boolean first=false;
+    static Boolean first=false;
     static List<String> musicList=new ArrayList<String>();
     static List<String>musicing_list=new ArrayList<String>();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         try {
-
+                //读取assets文件夹下的所有文件
               String  filename []= getResources().getAssets().list("");
-
               int num=filename.length-2;
               filenames=new String[num];
                for(int i=2;i<filename.length;i++)
                  filenames[i-2]=filename[i].substring(0, filename[i].indexOf("."));
 
-
         } catch (IOException e) {
             e.printStackTrace();
         }
         setContentView(R.layout.activity_main);
+
         seekBar=findViewById(R.id.music_bar);
         button_order=findViewById(R.id.order);
+
+        //更新进度条
         handler=new Handler(){
             public void handleMessage(Message msg) {
                 if(msg.what==UPDATE)
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements MusicItem.OnFragm
             }
         };
 
+        //每隔一秒向主线程发送UPDATE信息，更新进度条位置
         final Runnable myWorker = new Runnable() {
             int position, mMax, sMax;
             @Override
@@ -88,8 +91,11 @@ public class MainActivity extends AppCompatActivity implements MusicItem.OnFragm
             }
         };
 
+        //发送UPDATE信息线程启动
         Thread workThread = new Thread(null, myWorker, "WorkThread");
         workThread.start();
+
+        //进度条监听器，控制拖动时的操作
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
@@ -113,12 +119,13 @@ public class MainActivity extends AppCompatActivity implements MusicItem.OnFragm
 
     }
 
+    //主Activity注册菜单
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_all,menu);
         return super.onCreateOptionsMenu(menu);
     }
-    public boolean onOptionsItemSelected(MenuItem item) {
 
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.all:
                 musicing_list.clear();
@@ -130,14 +137,14 @@ public class MainActivity extends AppCompatActivity implements MusicItem.OnFragm
         return super.onOptionsItemSelected(item);
     }
 
+    //列表项点击事件
     @Override
     public void onWordItemClick(String musicname) {
-
-        Intent intent=new Intent(this,MusicService.class);
-        intent.putExtra("name",musicname);
-        startService(intent);
+       play(musicname);
+       first=true;
     }
 
+    //列表项长按事件
     @Override
     public void onDeleteDialog(final String musicname) {
         new AlertDialog.Builder(this).setTitle("从当前列表删除")
@@ -145,8 +152,8 @@ public class MainActivity extends AppCompatActivity implements MusicItem.OnFragm
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        musicing_list.remove(looking(musicname));
-                       MusicService.flag=looking(MusicService.songname);//删除歌曲
+                        musicing_list.remove(looking(musicname));//删除歌曲
+                       MusicService.flag=looking(MusicService.songname);
                         RefreshWordItemFragment();
                    }    })
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -154,6 +161,8 @@ public class MainActivity extends AppCompatActivity implements MusicItem.OnFragm
                 .create().show();
 
     }
+
+    //刷新列表
     private void RefreshWordItemFragment() {
         MusicItem wordItemFragment = (MusicItem) getSupportFragmentManager()
                 .findFragmentById(R.id.musiclist);
@@ -166,26 +175,33 @@ public class MainActivity extends AppCompatActivity implements MusicItem.OnFragm
             if(name.equals(musicing_list.get(i)))
                 return i;
         }
-        return 0;
+        return -1;
     }
 
+    //暂停/播放按钮
     public void onClick_Pause(View view) {
+
         if(first==false)
         {
+            if(!musicing_list.isEmpty()){
             play(musicing_list.get(0));
-            first=true;
+            first=true;}
         }
-        else{
-
-        if(MusicService.player.isPlaying()){
+        else if(MusicService.player.isPlaying()){
             MusicService.player.pause();
             first=true;}
         else
-            MusicService.player.start();}
+            MusicService.player.start();
     }
 
+    //上一首按钮
     public void onClick_Last(View view) {
-        if(order==1)
+        if(musicing_list.isEmpty())
+            return;
+        else if(MusicService.flag==-1){
+            play(musicing_list.get(0));
+        }
+       else if(order==1)
         {
             Random rand = new Random();
             int randNum = rand.nextInt(MusicService.totalnum);
@@ -196,8 +212,14 @@ public class MainActivity extends AppCompatActivity implements MusicItem.OnFragm
                    play(musicing_list.get(MusicService.flag-1));}}
     }
 
+    //下一首按钮
     public void onClick_Next(View view) {
-        if(order==1)
+        if(musicing_list.isEmpty())
+            return;
+        else if(MusicService.flag==-1){
+            play(musicing_list.get(0));
+        }
+        else if(order==1)
         {
             Random rand = new Random();
             int randNum = rand.nextInt(MusicService.totalnum);
@@ -208,11 +230,8 @@ public class MainActivity extends AppCompatActivity implements MusicItem.OnFragm
            play(musicing_list.get(MusicService.flag+1));}}
     }
 
-//    public void onClick_Stop(View view) {
-//        MusicService.player.stop();
-//
-//    }
 
+    //启动Service，播放歌曲
     public void play(String name)
     {
         Intent intent=new Intent(this,MusicService.class);
@@ -220,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements MusicItem.OnFragm
         startService(intent);
     }
 
-
+    //随机或顺序播放按钮
     public void onClick_order(View view) {
         if(order==0){
         button_order.setText("随机");

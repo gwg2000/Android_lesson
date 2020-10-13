@@ -34,14 +34,13 @@ import java.util.Map;
 public class MusicItem extends ListFragment {
 
     public interface OnFragmentInteractionListener {
-        public void onWordItemClick(String musicname);
 
+        public void onWordItemClick(String musicname);
         public void onDeleteDialog(String musicname);
 
     }
-    //String music[]={"南山南","走马","飘向北方"};
-    ArrayList<Map<String,String>> list_total,list_xian;
 
+    ArrayList<Map<String,String>> list_total;
     private OnFragmentInteractionListener mListener;
 
     public void onAttach(Context context) {
@@ -71,17 +70,16 @@ public class MusicItem extends ListFragment {
         }
     }
 
+    //根据musicing_list构建当前列表
     public void refreshWordsList() {
 
         list_total=new ArrayList<Map<String,String>>();
-        //list_xian=new ArrayList<Map<String,String>>();
         for(int i=0;i<MainActivity.musicing_list.size();i++)
         {
             Map<String,String> item=new HashMap<String,String>();
             item.put("Musicname",MainActivity.musicing_list.get(i));
             list_total.add(item);
-            //list_xian.add(item);
-           // MainActivity.musicList.add(i,MainActivity.filenames[i]);
+
         }
             SimpleAdapter adapter = new SimpleAdapter(getActivity(), list_total, R.layout.item,
                     new String[]{"Musicname"},
@@ -92,19 +90,16 @@ public class MusicItem extends ListFragment {
         MusicService.totalnum=MainActivity.musicing_list.size();
         }
 
-    public MusicItem() {
-    }
 
-
+    public MusicItem() {}
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         refreshWordsList();
-
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -114,6 +109,8 @@ public class MusicItem extends ListFragment {
         registerForContextMenu(mListView);
         return view;
     }
+
+
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getActivity().getMenuInflater().inflate(R.menu.menu_delete, menu);
