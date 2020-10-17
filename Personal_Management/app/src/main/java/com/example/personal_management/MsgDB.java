@@ -8,8 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class MsgDB extends SQLiteOpenHelper {
     private final static String DATABASE_NAME = "Msgdb";//数据库名字
-    private final static int DATABASE_VERSION = 1;//数据库版本
+    private final static int DATABASE_VERSION = 2;//数据库版本
 
+    private final static String SQL_DELETE_DATABASE = "DROP TABLE IF EXISTS " + "msg";
     private final static String SQL_CREATE_DATABASE = "CREATE TABLE  msg (" +
             "time varchar(30) PRIMARY KEY NOT NULL," +
             "name varchar(30)," +
@@ -18,6 +19,10 @@ public class MsgDB extends SQLiteOpenHelper {
             "temps varchar(20)," +
             "radioselect varchar(5)," +
             "address text)";
+    private final static String SQL_CREAT_Ring="CREATE TABLE  ring (" +
+            "id text," +
+            "time varchar(30)," +
+            "info text)";
 
 
     public  MsgDB(Context context) {
@@ -27,10 +32,12 @@ public class MsgDB extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_DATABASE);
+        db.execSQL(SQL_CREAT_Ring);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL(SQL_DELETE_DATABASE);
+        onCreate(db);
     }
 }

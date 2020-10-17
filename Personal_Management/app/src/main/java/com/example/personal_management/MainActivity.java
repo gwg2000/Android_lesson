@@ -37,4 +37,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void onClick_INF(View view) {
+        Intent intent=new Intent(this,RingListActivity.class);
+        startActivity(intent);
+    }
 }

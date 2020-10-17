@@ -16,6 +16,14 @@
     tools:ignore="MissingConstraints">
 
     <Button
+        android:id="@+id/inf_rem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="消息提醒"
+        android:onClick="onClick_INF"
+        android:textSize="35dp"
+        />
+    <Button
         android:id="@+id/report"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

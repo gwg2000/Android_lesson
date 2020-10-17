@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 public class MsgApplication extends Application {
+    public  static int num=0;
     private static Context context;
     public static Context getContext(){
         return MsgApplication.context;
