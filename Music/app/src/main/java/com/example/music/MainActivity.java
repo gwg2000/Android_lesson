@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements MusicItem.OnFragm
     Handler handler;
     SeekBar seekBar;
     Button button_order;
+    TextView textname;
     int UPDATE = 0x101;
     static String filenames[]=null;
     static int order=0;
@@ -52,13 +54,14 @@ public class MainActivity extends AppCompatActivity implements MusicItem.OnFragm
 
         seekBar=findViewById(R.id.music_bar);
         button_order=findViewById(R.id.order);
-
+        textname=findViewById(R.id.musicname);
         //更新进度条
         handler=new Handler(){
             public void handleMessage(Message msg) {
                 if(msg.what==UPDATE)
                 {
                     seekBar.setProgress(msg.arg1);
+                    textname.setText("当前播放歌曲："+MusicService.songname);
                 }
             }
         };

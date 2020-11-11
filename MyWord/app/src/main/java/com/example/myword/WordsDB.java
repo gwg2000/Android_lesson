@@ -1,7 +1,10 @@
 package com.example.myword;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.util.Log;
 
 import com.example.myword.dummy.Words;
@@ -12,7 +15,7 @@ import java.util.Map;
 
 public class WordsDB {
     static Integer idd;
-    private static WordsDBHelper mDbHelper=null;
+    static WordsDBHelper mDbHelper=null;
     private static WordsDB instance=new WordsDB();
     public static WordsDB getWordsDB(){
         return WordsDB.instance;

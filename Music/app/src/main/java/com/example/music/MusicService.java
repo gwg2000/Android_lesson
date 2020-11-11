@@ -52,9 +52,11 @@ public class MusicService extends Service {
                             flag = randNum;
                         }
                         else {
+                            if((flag++)!=totalnum)
+                            { flag++;
                             assetFileDescriptor =
-                                    assetManager.openFd(MainActivity.musicing_list.get(flag + 1) + ".mp3");
-                            flag++;
+                                    assetManager.openFd(MainActivity.musicing_list.get(flag) + ".mp3");}
+
                         }
                         player.setDataSource(assetFileDescriptor.getFileDescriptor(), assetFileDescriptor.getStartOffset(), assetFileDescriptor.getLength());
                         player.prepare();
